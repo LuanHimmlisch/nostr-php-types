@@ -6,6 +6,8 @@ use BitcoinPHP\BitcoinECDSA\BitcoinECDSA;
 
 readonly final class Event extends Type
 {
+    public array $extra;
+
     /**
      * @param Tag[] $tags
      */
@@ -17,7 +19,9 @@ readonly final class Event extends Type
         public array $tags,
         public string $content,
         public string $signature,
+        array ...$extra,
     ) {
+        $this->extra = $extra;
     }
 
     /**
@@ -29,6 +33,7 @@ readonly final class Event extends Type
         int $created_at,
         int $kind,
         array $tags = [],
+        array ...$extra,
     ): static {
         $crypto = new BitcoinECDSA();
         $crypto->setPrivateKey($privateKey);
@@ -52,7 +57,8 @@ readonly final class Event extends Type
             $kind,
             $tags,
             $content,
-            bin2hex($id)
+            bin2hex($id),
+            ...$extra
         );
     }
 
@@ -66,6 +72,7 @@ readonly final class Event extends Type
             'tags' => $this->tags,
             'content' => $this->content,
             'signature' => $this->signature,
+            ...$this->extra
         ];
     }
 }
